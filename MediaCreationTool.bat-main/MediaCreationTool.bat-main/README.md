@@ -1,112 +1,102 @@
-Not just an Universal MediaCreationTool wrapper script with ingenious support for business editions,  
+Pas seulement un script enveloppant Universal MediaCreationTool avec un support ingénieux pour les éditions commerciales,
 <img src="preview.png">  
-A powerful yet simple windows 10 / 11 deployment automation tool as well!  
+Un outil d’automatisation de déploiement Windows 10/11 puissant et simple!  
 
 Presets  
 -------  
-1 ***Auto Upgrade*** with detected media, script assists setupprep for upgrading directly  
-> _- can keep files and apps on more scenarios where os and target edition does not match_  
-> _- can switch detected edition by adding EditionID to script name_  
-> _- can troubleshoot upgrade failing by adding `no_update` to script name_  
+1 ***Mise à niveau automatique*** avec les supports détectés, le script aide setupprep pour la mise à niveau directe
+> _- peut conserver des fichiers et des applications sur plusieurs scénarios où os et l’édition cible ne correspondent pas match_
+> _- peut changer l’édition détectée en ajoutant EditionID au script name_
+> _- peut résoudre les problèmes de mise à niveau en ajoutant no_update’ au script name_
 
-2 ***Auto ISO*** with detected media in current folder directly _(or C:\ESD if run from zip)_  
-> _- can override detected media by adding edition name / language / arch to script name_  
+2 ***ISO automatique*** avec le support détecté dans le dossier courant directement _(ou C:\ESD si exécuté à partir de zip)_
+> _- peut surcharger les supports détectés en ajoutant le nom de l’édition / la langue / l’arc au nom du script name_
 
-3 ***Auto USB*** with detected media in specified usb target  
-> _- for data safety, this is not fully automated - must select the usb drive manually in GUI_  
+3 ***USB automatique*** avec support détecté dans la cible USB spécifiée
+> _- pour la sécurité des données, ce n’est pas entièrement automatisé - doit sélectionner la clé USB manuellement dans GUI_
 
-4 ***Select*** with user picked Edition, Language, Arch (x86,x64,both) - on specified target  
-> _- implicit choice, includes setup override files (disable by adding `def` to script name)_  
+4 ***Séléctionner*** avec l’utilisateur choisi Edition, Language, Arch (x86,x64,both) - sur la cible spécifiée
+> _- choix implicite, inclut les fichiers de priorité de configuration (désactiver en ajoutant `def' au nom du script)_
 
-5 ***MCT Defaults*** runs unassisted, creating media without script modification  
-> _- no added files, script passes `products.xml` and quits without touching media_  
-
-1-4 presets will modify created media in the following ways:  
-> _- write `auto.cmd` to run on demand from media for auto upgrade with edition switch support and skip tpm_  
-> _- write `$OEM$` folder (if it exists) with post setup tweaks like `$OEM$\$$\Setup\Scripts\setupcomplete.cmd`_  
-> _- write `sources\PID.txt` to preselect edition at media boot or setup within windows (if configured)_  
-> _- write `sources\EI.cfg` to prevent product key prompt on Windows 11 consumer media (11 only)_  
-> _- write `AutoUnattend.xml` in boot.wim to enable local account on Windows 11 Home (11 only)_  
-> _- patch `winsetup.dll` in boot.wim to remove windows 11 setup checks when booting from media (11 only)_  
-> _- can disable by adding `def` to script name_  
+1 à 4 préréglages modifieront le support créé de la manière suivante :
+> _- écrire « auto.cmd » pour exécuter à la demande sur le support pour la mise à niveau automatique avec prise en charge du commutateur d’édition et sauter tpm_
+> _- écrire le dossier $OEM$’ (s’il existe) avec des réglages post setup comme $OEM$ $$ Setup Scripts setupcomplete.cmd`_
+> _- écrire « sources PID.txt » pour présélectionner l’édition au démarrage du support ou à la configuration dans Windows (si configuré)_
+> _- écrire « sources EI.cfg » pour empêcher l’invite de clé de produit sur les médias grand public Windows 11 (11 seulement)_
+> _- écrire « AutoUnattend.xml » dans boot.wim pour activer le compte local sur Windows 11 Home (11 uniquement)_
+> _- patch `winsetup.dll’ in boot.wim pour supprimer les contrôles de configuration de Windows 11 lors du démarrage depuis un support (11 uniquement)_
+> _- peut être désactivé en ajoutant `def’ au script name_
 
 Simple deployment  
 -----------------   
-**auto.cmd** is behind ***Auto Upgrade*** preset via GUI,  
-or fully unnatended by renaming script with `auto MediaCreationTool.bat`  
-Should make it easy to upgrade keeping files and apps when the OS edition does not match the created media  
-Generated script is added to the created media so you can run it again at any time  
-It is fairly generic - it will detect available editions in install.esd, pick a suitable index, then  
-update EditionID in the registry to match target; can even force upgrade to another edition, keeping files and apps!  
-Also sets recommended setup options with least amount of issues on upgrades  
+**auto.cmd** est derrière ***Auto Upgrade*** préréglage via GUI, 
+ou complètement inusité en renommant le script avec « auto MediaCreationTool.bat »
+Devrait rendre facile de mettre à niveau la conservation des fichiers et des applications lorsque l’édition du système d’exploitation ne correspond pas au support créé
+Le script généré est ajouté au support créé afin que vous puissiez l’exécuter à nouveau à tout moment
+Il est assez générique - il détectera les éditions disponibles dans install.esd, choisir un index approprié, puis
+mettre à jour EditionID dans le registre pour correspondre à la cible; peut même forcer la mise à niveau vers une autre édition, en conservant les fichiers et les applications!
+Définit également les options de configuration recommandées avec le moins de problèmes sur les mises à niveau
 
-> Let's say the current OS is Enterprise LTSC 2019, and you use the business media to upgrade:  
-> **auto.cmd** selects Enterprise index and adjust EditionID to Enterprise in the registry (backed up as EditionID_undo)  
-> Maybe you also want to switch edition,  
-> ex. by renaming the script to  `ProfessionalWorkstation MediaCreationTool.bat`:  
-> **auto.cmd** selects Professional index and sets EditionID to ProfessionalWorkstation in the registry.  
-> Let's say the OS is Windows 7 Ultimate or PosReady, and you use the consumer media to upgrade:  
-> **auto.cmd** selects Professional index, and sets EditionID to Professional or Enterprise, respectively.  
-> In all cases, the script tries to pick an existing index, else a compatible one to keep files and apps on upgrade.  
->   
-> Let's say you have a dozen PCs spread with versions: 7, 8.1, 10 and editions: Ultimate, Home, Enterprise LTSB..  
-> If you need to upgrade all to the latest 10 version and only use Pro, you could rename the script as:  
-> `auto 21H2 Pro MediaCreationTool.bat`  
-> Can even add a VL / MAK / retail product key in the same way to take care of licensing differences.  
-> The script also picks up any `$OEM$` folder in the current location - for unified branding, configuration, tweaks etc.  
-
+> Supposons que le système d’exploitation actuel est Enterprise LTSC 2019 et que vous utilisez le média d’affaires pour mettre à niveau :
+> **auto.cmd** sélectionne Enterprise index et ajuste EditionID à Enterprise dans le registre (sauvegardé en tant que EditionID_undo)
+> Peut-être que vous voulez aussi changer d’édition,
+> ex. en renommant le script en « ProfessionalWorkstation MediaCreationTool.bat » :
+> **auto.cmd** sélectionne Professional index et définit EditionID à ProfessionalWorkstation dans le registre.
+> Disons que le système d’exploitation est Windows 7 Ultimate ou PosReady et que vous utilisez les médias grand public pour mettre à niveau :
+> **auto.cmd** sélectionne Professional index et définit EditionID à Professional ou Enterprise, respectivement.
+> Dans tous les cas, le script tente de choisir un index existant, sinon un index compatible pour conserver les fichiers et les applications à la mise à niveau.
+>
+> Disons que vous avez une douzaine de PC répartis avec les versions : 7, 8.1, 10 et les éditions : Ultimate, Home, Enterprise LTSB..
+> Si vous devez tout mettre à niveau vers la dernière version 10 et n’utiliser que Pro, vous pouvez renommer le script comme suit :
+> « auto 21H2 Pro MediaCreationTool.bat »
+> Peut même ajouter une clé de produit VL / MAK / retail de la même manière pour régler les différences de licence.
+> Le script récupère également tout dossier « $OEM$» à l’emplacement actuel - pour une image de marque unifiée, une configuration, des réglages, etc.
 Windows 10  
 ----------  
-[MediaCreationTool.bat](MediaCreationTool.bat) works smoothly, not having to deal with anti-consumer install checks..  
+[MediaCreationTool.bat](MediaCreationTool.bat) fonctionne sans heurt, ne pas avoir à faire face à des contrôles d’installation anti-consumeur..
 
-
-Windows 11 and the TPM / SecureBoot / CPU / Storage setup checks  
+Windows 11 et les contrôles de configuration TPM / SecureBoot / CPU / Storage 
 ----------------------------------------------------------------  
-[MediaCreationTool.bat](MediaCreationTool.bat) creates 11 media that will **automatically skip clean install checks**  
-***Auto Upgrade*** preset, or launching `auto.cmd` from the created media will **automatically skip upgrade checks**  
-Running `setup.exe` from the created media does not bypass setup checks - use `auto.cmd` instead!  
-To NOT add bypass to the media, use ***MCT Defaults*** preset or rename the script as `def MediaCreationTool.bat`  
+[MediaCreationTool.bat](MediaCreationTool.bat) crée 11 supports qui **sauteront automatiquement les vérifications d’installation propres**
+***La mise à niveau automatique*** prédéfinie ou le lancement du fichier auto.cmd à partir du support créé **sautera automatiquement les vérifications de mise à niveau**
+L’exécution du fichier setup.exe à partir du support créé ne contourne pas les vérifications de configuration - utilisez plutôt le fichier auto.cmd!
+Pour NE PAS ajouter de dérivation au support, utilisez le préréglage ***MCT Defaults*** ou renommez le script en « def MediaCreationTool.bat ».
 
-> Regarding the bypass method, for a more reliable and future-proof experience,  
-> clean installation is still handled via _winsetup.dll_ patching in _boot.wim_  
-> upgrade is now handled only via `auto.cmd` with the */Product Server* trick  
-> *Just ignore the 'Windows Server' label, please!*  
-Note that [Skip_TPM_Check_on_Dynamic_Update.cmd](bypass11/Skip_TPM_Check_on_Dynamic_Update.cmd) acts globally and **will skip upgrade checks via setup.exe**  
+> Concernant la méthode de dérivation, pour une expérience plus fiable et pérenne,
+> l’installation propre est toujours gérée via le correctif _winsetup.dll_ dans _boot.wim_
+> la mise à niveau est désormais gérée uniquement via le fichier auto.cmd avec l’astuce */Product Server*
+> *Ignorez simplement l’étiquette « Windows Server », s’il vous plaît! *
+Noter que [Skip_TPM_Check_on_Dynamic_Update.cmd](bypass11/Skip_TPM_Check_on_Dynamic_Update.cmd) agit globalement et **sautera les vérifications de mise à niveau via setup.exe**
 
-Get RP/BETA/DEV 11 via Windows Update on "unsupported" hardware  
+Obtenez RP/BETA/DEV 11 via Windows Update sur le matériel "non pris en charge"
 ---------------------------------------------------------------  
-Step 1: use [Skip_TPM_Check_on_Dynamic_Update.cmd](bypass11/Skip_TPM_Check_on_Dynamic_Update.cmd) to automatically bypass setup requirements  
-_It's a set it and forget it script, with built-in undo - v7 using more reliable /Product Server trick_  
+Etape 1 : utiliser [Skip_TPM_Check_on_Dynamic_Update.cmd](bypass11/Skip_TPM_Check_on_Dynamic_Update.cmd) pour contourner automatiquement les exigences de configuration
+_C’est un script set it and forget it, avec undo intégré - v7 utilisant plus fiable /Product Server trick_
 
-Step 2: use [OfflineInsiderEnroll](https://github.com/abbodi1406/offlineinsiderenroll) to subscribe to the channel you want  
-_while on 10, use BETA for Windows 11 22000.x builds (release), DEV for Windows 11 225xx.x builds (experimental)_  
+Etape 2 : vérifier les mises à jour via Paramètres - Mise à jour de Windows et sélectionnez Mise à niveau vers Windows 11
 
-Step 3: check for updates via Settings - Windows Update and select Upgrade to Windows 11  
-
-Already have a 11 ISO, USB or extracted Files and want to add a bypass  
+Ont déjà un 11 ISO, USB ou fichiers extraits et veulent ajouter un bypass
 ----------------------------------------------------------------------  
-Use [Quick_11_iso_esd_wim_TPM_toggle.bat](bypass11/Quick_11_iso_esd_wim_TPM_toggle.bat) from the confort of right-click - SendTo menu  
+Utilser [Quick_11_iso_esd_wim_TPM_toggle.bat](bypass11/Quick_11_iso_esd_wim_TPM_toggle.bat) du confort du clic droit - Menu SendTo
 
-Switches installation type to Server skipping install checks, or back to Client if run again on the same file, restoring hash!  
-**directly** on any downloaded windows 11 iso or extracted esd and wim, so there's no iso / dism mounting  
-_defiantly quick_  
+Bascule le type d’installation vers Server en sautant les contrôles d’installation, ou vers Client s’il est exécuté à nouveau sur le même fichier, en restaurant le hachage !
+**directement** sur n’importe quel Windows 11 iso téléchargé ou extrait esd et wim, donc il n’y a pas de montage iso / dism
+_courageusement quick_
 
-Works great with business / enterprise media since it comes with ei.cfg so setup won't ask for product key at start  
-for consumer / core media you can add a generic `EI.cfg` to the media\sources yourself with this content:  
-`[Channel]`  
-`_Default`  
+Fonctionne très bien avec les médias d’affaires ou d’entreprise, car il est livré avec ei.cfg, de sorte que la configuration ne demandera pas de clé de produit au début
+pour les médias grand public ou de base, vous pouvez ajouter vous-même un fichier générique « EI.cfg » aux sources de médias avec ce contenu :
+«[Canal]»
+«_Par défaut»
 
-> if setup still asks for product key, input retail or gvlk keys found in media\sources\product.ini  
-> _gvlkprofessional=W269N-WFGWX-YVC9B-4J6C9-T83GX gvlkcore=TX9XD-98N7V-6WMQ6-BX7FG-H8Q99_  
-> _gvlkenterprise=NPPR9-FWDCX-D2C8J-H872K-2YT43 gvlkeducation=NW6C2-QMPVW-D7KKK-3GKT6-VCFB2 etc._  
+> si la configuration demande toujours une clé de produit, veuillez insérer la votre qui était sur le système d'exploitation Windows 10
 
-Note that [Skip_TPM_Check_on_Dynamic_Update.cmd](bypass11/Skip_TPM_Check_on_Dynamic_Update.cmd) **will work for manual upgrade as well**  
-_regardless of mounted iso / usb media already having a bypass added or not_  
+Noter que [Skip_TPM_Check_on_Dynamic_Update.cmd](bypass11/Skip_TPM_Check_on_Dynamic_Update.cmd) **fonctionnera également pour la mise à niveau manuelle**
+_indépendamment des supports iso / usb montés ayant déjà un bypass ajouté ou not_
 
 Changelog  
 ---------  
-_No need to right-click Run as Admin, script will ask itself. Directly saving the Raw files no longer breaks line endings_  
-_We did it! We broke [the previous gist](https://git.io/MediaCreationTool.bat)_ ;) So this is the new home. **Thank you all!**  
+_Pas besoin de cliquer avec le bouton droit de la souris sur Exécuter en tant qu’administrateur, le script se demandera. Enregistrer directement les fichiers bruts ne casse plus la ligne endings_
+_Nous l’avons fait! Nous avons rompu [the previous gist](https://git.io/MediaCreationTool.bat)_ ;) C’est donc la nouvelle maison. **Merci à tous! **
 
 [discuss on MDL](https://forums.mydigitallife.net/threads/universal-mediacreationtool-wrapper-script-create-windows-11-media-with-automatic-bypass.84168/)  
 
